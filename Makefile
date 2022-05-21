@@ -1,5 +1,6 @@
 NAME	=	MargesFamilly
-SRC		=	$(wildcard grf/*.cpp)
+SRC		=	$(wildcard grf/*.cpp)	\
+			$(wildcard src/*.cpp)
 OBJ		=	$(SRC:.cpp=.o)
 
 LDFLAGS	=	-lsfml-system -lsfml-graphics -lsfml-audio -lsfml-window
