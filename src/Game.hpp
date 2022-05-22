@@ -9,6 +9,11 @@
 #define GAME_HPP_
 
 #include "../grf/grf.h"
+#include "GameObject.hpp"
+#include "Road.hpp"
+#include "Block.hpp"
+#include <fstream>
+#include <iostream>
 
 class Game {
     public:
@@ -20,8 +25,10 @@ class Game {
 
     private:
         // game
+        int id = 0;
         int timer;
         std::vector<std::string> map;
+        std::vector<std::shared_ptr<GameObject>> listObject;
         
         // grf
         grf::Window wn;
