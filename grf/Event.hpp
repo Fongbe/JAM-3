@@ -17,11 +17,17 @@ namespace grf
             Event();
             ~Event();
 
-            Vector MOUSEPOS;
+            Vector MOUSE_POS;
 
             bool QUIT = false;
             
             bool MOUSE_LEFT = false;
+            bool MOUSE_LEFTUP = false;
+            bool MOUSE_LEFTDOWN = false;
+
+            bool MOUSE_RIGHT = false;
+            bool MOUSE_RIGHTUP = false;
+            bool MOUSE_RIGHTDOWN = false;
 
             bool KEY_DOWN = false;
             bool KEY_UP = false;

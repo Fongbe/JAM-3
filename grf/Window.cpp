@@ -67,14 +67,32 @@ grf::Event grf::Window::getEvent(void)
     if (_wn == nullptr)
         return ev;
     sf::Vector2i v = sf::Mouse::getPosition();
-    ev.MOUSEPOS.x = v.x;
-    ev.MOUSEPOS.y = v.y;
+    ev.MOUSE_POS.x = v.x;
+    ev.MOUSE_POS.y = v.y;
     if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
         ev.MOUSE_LEFT = true;
-    while (_wn->pollEvent(event)) {
+    if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Right))
+        ev.MOUSE_RIGHT = true;
+    while (_wn->pollEvent(event))
+    {
         if (event.type == event.Closed)
             ev.QUIT = true;
-        if (event.type == event.KeyReleased) {
+        if (event.type == event.MouseButtonPressed)
+        {
+            if (event.mouseButton.button == sf::Mouse::Left)
+                ev.MOUSE_LEFTDOWN = true;
+            if (event.mouseButton.button == sf::Mouse::Right)
+                ev.MOUSE_RIGHTDOWN = true;
+        }
+        if (event.type == event.MouseButtonReleased)
+        {
+            if (event.mouseButton.button == sf::Mouse::Left)
+                ev.MOUSE_LEFTUP = true;
+            if (event.mouseButton.button == sf::Mouse::Right)
+                ev.MOUSE_RIGHTUP = true;
+        }
+        if (event.type == event.KeyReleased)
+        {
             if (event.key.code == sf::Keyboard::Left)
                 ev.KEY_LEFT_RELEASED = true;
             if (event.key.code == sf::Keyboard::Right)
@@ -142,7 +160,8 @@ grf::Event grf::Window::getEvent(void)
             if (event.key.code == sf::Keyboard::Z)
                 ev.KEY_Z_RELEASED = true;
         }
-        if (event.type == event.KeyPressed) {
+        if (event.type == event.KeyPressed)
+        {
             if (event.key.code == sf::Keyboard::Left)
                 ev.KEY_LEFT_PRESSED = true;
             if (event.key.code == sf::Keyboard::Right)
@@ -282,7 +301,8 @@ grf::Event grf::Window::getEvent(void)
 
 void grf::Window::drawSprite(grf::Sprite spr, grf::Vector v)
 {
-    if (_wn != nullptr && spr.isDrawable()) {
+    if (_wn != nullptr && spr.isDrawable())
+    {
         spr.setPosition(v);
         _wn->draw(spr.getSprite());
     }
@@ -290,8 +310,10 @@ void grf::Window::drawSprite(grf::Sprite spr, grf::Vector v)
 
 void grf::Window::drawSprite(grf::SpriteSheet spr, unsigned int i, grf::Vector v)
 {
-    if (_wn != nullptr && i < spr.getSize()) {
-        if (spr.getSheet()[i]->isDrawable()) {
+    if (_wn != nullptr && i < spr.getSize())
+    {
+        if (spr.getSheet()[i]->isDrawable())
+        {
             spr.setPosition(v);
             _wn->draw(spr.getSheet()[i]->getSprite());
         }
@@ -300,7 +322,8 @@ void grf::Window::drawSprite(grf::SpriteSheet spr, unsigned int i, grf::Vector v
 
 void grf::Window::drawSpriteExt(grf::Sprite spr, grf::Vector v, int a, Vector s)
 {
-    if (_wn != nullptr && spr.isDrawable()) {
+    if (_wn != nullptr && spr.isDrawable())
+    {
         spr.setPosition(v);
         spr.setAngle(a);
         spr.setScale(s);
@@ -310,8 +333,10 @@ void grf::Window::drawSpriteExt(grf::Sprite spr, grf::Vector v, int a, Vector s)
 
 void grf::Window::drawSpriteExt(grf::SpriteSheet spr, unsigned int i, grf::Vector v, float a, Vector s)
 {
-    if (_wn != nullptr && i < spr.getSize()) {
-        if (spr.getSheet()[i]->isDrawable()) {
+    if (_wn != nullptr && i < spr.getSize())
+    {
+        if (spr.getSheet()[i]->isDrawable())
+        {
             spr.setPosition(v);
             spr.setAngle(a);
             spr.setScale(s);

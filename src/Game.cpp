@@ -9,8 +9,6 @@
 
 Game::Game()
 {
-    timer = 0;
-    tend = std::chrono::steady_clock::now() + std::chrono::seconds(1);
     menu = grf::SpriteSheet("", "sprites/menu.png", 1, 1920, 1080, 0, 0);
     end = grf::SpriteSheet("", "sprites/end.png", 1, 1920, 1080, 0, 0);
     button = grf::SpriteSheet("", "sprites/button.png", 3, 299, 134, 0, 0);
@@ -31,10 +29,6 @@ Game::Game()
     charLisa.setOrigin(grf::Vector(15, 40));
     charMaggie.setOrigin(grf::Vector(16, 30));
     grass = grf::SpriteSheet("", "sprites/grass.png", 1, 2560, 1536, 0, 0);
-    homer = 1;
-    bart = 1;
-    lisa = 1;
-    maggie = 1;
 }
 
 Game::~Game()
@@ -58,16 +52,29 @@ void Game::handleObjects(void)
     if (p->pos.x == posMaggie.x && p->pos.y == posMaggie.y)
         maggie = 0;
     if (!homer && !bart && !lisa && !maggie)
+    {
         status = 2;
+        map.clear();
+        listObject.clear();
+        homer = 1;
+        bart = 1;
+        lisa = 1;
+        maggie = 1;
+    }
 }
 
 void Game::handleMenu(void)
 {
-    if (ev.MOUSE_LEFT)
+    if (ev.MOUSE_LEFTDOWN)
     {
-        if (ev.MOUSEPOS.y >= 500 && ev.MOUSEPOS.y <= 634 && ev.MOUSEPOS.x >= 810 && ev.MOUSEPOS.x <= 1100)
+        if (ev.MOUSE_POS.y >= 500 && ev.MOUSE_POS.y <= 634 && ev.MOUSE_POS.x >= 810 && ev.MOUSE_POS.x <= 1100)
+        {
+            openMap();
             status = 1;
-        if (ev.MOUSEPOS.y >= 700 && ev.MOUSEPOS.y <= 834 && ev.MOUSEPOS.x >= 810 && ev.MOUSEPOS.x <= 1100)
+            timer = 0;
+            tend = std::chrono::steady_clock::now() + std::chrono::seconds(1);
+        }
+        if (ev.MOUSE_POS.y >= 700 && ev.MOUSE_POS.y <= 834 && ev.MOUSE_POS.x >= 810 && ev.MOUSE_POS.x <= 1100)
             wn.destroy();
     }
 }
@@ -75,7 +82,6 @@ void Game::handleMenu(void)
 void Game::loop(void)
 {
     wn.init(1920, 1080, "Marge's Family");
-    openMap();
     while (wn.isRunning())
     {
         ev = wn.getEvent();
@@ -85,7 +91,7 @@ void Game::loop(void)
             handleMenu();
         if (status == 1)
             handleObjects();
-        if (status == 1)
+        if (status == 2)
             handleEnd();
         if (wn.isRunning())
         {
@@ -115,15 +121,10 @@ void Game::drawTimer(void)
 
 void Game::handleEnd(void)
 {
-    if (ev.MOUSE_LEFT)
+    if (ev.MOUSE_LEFTDOWN)
     {
-        if (ev.MOUSEPOS.y >= 700 && ev.MOUSEPOS.y <= 834 && ev.MOUSEPOS.x >= 810 && ev.MOUSEPOS.x <= 1100) {
+        if (ev.MOUSE_POS.y >= 700 && ev.MOUSE_POS.y <= 834 && ev.MOUSE_POS.x >= 810 && ev.MOUSE_POS.x <= 1100)
             status = 0;
-            homer = 1;
-            bart = 1;
-            lisa = 1;
-            maggie = 1;
-        }
     }
 }
 
@@ -161,8 +162,25 @@ void Game::draw(void)
     }
     if (status == 2)
     {
+        text.setScale(grf::Vector(4, 4));
         wn.drawSprite(end, 0, grf::Vector(0, 0));
         wn.drawSprite(button, 2, grf::Vector(960, 700));
+        int min = timer / 60;
+        int sec = timer % 60;
+        std::string t = "";
+        t += std::to_string(min);
+        t += ":";
+        t += std::to_string(sec);
+        float d = t.size();
+        d = d / 2;
+        d = d * 144;
+        for (size_t i = 0; i < t.size(); i++) {
+            if (t[i] == ':')
+                wn.drawSprite(text, 36, grf::Vector(960-d+i*144, 300));
+            else
+                wn.drawSprite(text, 26 + t[i] - '0', grf::Vector(960-d+i*144, 300));
+        }
+        text.setScale(grf::Vector(1, 1));
     }
 }
 
