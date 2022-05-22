@@ -13,6 +13,8 @@
 #include "Road.hpp"
 #include "Block.hpp"
 #include "Player.hpp"
+#include <time.h>
+#include <chrono>
 #include <fstream>
 #include <iostream>
 
@@ -24,11 +26,25 @@ class Game {
         void openMap(void);
         void draw(void);
         void handleObjects(void);
+        grf::Vector getRngPos(std::vector<std::string> map);
+        void drawTimer(void);
 
     private:
         // game
         int id = 0;
         int timer;
+        std::chrono::steady_clock::time_point tend;
+        
+        int homer;
+        int bart;
+        int lisa;
+        int maggie;
+
+        grf::Vector posHomer;
+        grf::Vector posBart;
+        grf::Vector posLisa;
+        grf::Vector posMaggie;
+
         std::shared_ptr<Player> p;
         std::vector<std::string> map;
         std::vector<std::shared_ptr<GameObject>> listObject;
@@ -36,6 +52,18 @@ class Game {
         // grf
         grf::Window wn;
         grf::Event ev;
+        grf::SpriteSheet Stree;
+        grf::SpriteSheet Shomer;
+        grf::SpriteSheet Smarge;
+        grf::SpriteSheet Sbart;
+        grf::SpriteSheet Slisa;
+        grf::SpriteSheet Smaggie;
+        grf::SpriteSheet charHomer;
+        grf::SpriteSheet charBart;
+        grf::SpriteSheet charLisa;
+        grf::SpriteSheet charMaggie;
+        grf::SpriteSheet grass;
+        grf::SpriteSheet text;
 };
 
 #endif /* !GAME_HPP_ */
