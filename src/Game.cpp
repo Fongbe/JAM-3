@@ -9,6 +9,13 @@
 
 Game::Game()
 {
+    timer = 0;
+    tend = std::chrono::steady_clock::now() + std::chrono::seconds(1);
+    menu = grf::SpriteSheet("", "sprites/menu.png", 1, 1920, 1080, 0, 0);
+    end = grf::SpriteSheet("", "sprites/end.png", 1, 1920, 1080, 0, 0);
+    button = grf::SpriteSheet("", "sprites/button.png", 3, 299, 134, 0, 0);
+    button.setOrigin(grf::Vector(150, 0));
+    text = grf::SpriteSheet("", "sprites/font.png", 38, 38, 46, 0, 0);
     Stree = grf::SpriteSheet("stree", "sprites/tree.png", 1, 200, 200, 0, 0);
     Shomer = grf::SpriteSheet("stree", "sprites/treeHomer.png", 2, 200, 200, 0, 0);
     Smarge = grf::SpriteSheet("stree", "sprites/treeMarge.png", 1, 200, 200, 0, 0);
@@ -23,6 +30,7 @@ Game::Game()
     charBart.setOrigin(grf::Vector(12, 45));
     charLisa.setOrigin(grf::Vector(15, 40));
     charMaggie.setOrigin(grf::Vector(16, 30));
+    grass = grf::SpriteSheet("", "sprites/grass.png", 1, 2560, 1536, 0, 0);
     homer = 1;
     bart = 1;
     lisa = 1;
@@ -35,6 +43,11 @@ Game::~Game()
 
 void Game::handleObjects(void)
 {
+    if (std::chrono::steady_clock::now() >= tend)
+    {
+        timer += 1;
+        tend = std::chrono::steady_clock::now() + std::chrono::seconds(1);
+    }
     p->move(map, ev);
     if (p->pos.x == posHomer.x && p->pos.y == posHomer.y)
         homer = 0;
@@ -44,6 +57,19 @@ void Game::handleObjects(void)
         bart = 0;
     if (p->pos.x == posMaggie.x && p->pos.y == posMaggie.y)
         maggie = 0;
+    if (!homer && !bart && !lisa && !maggie)
+        status = 2;
+}
+
+void Game::handleMenu(void)
+{
+    if (ev.MOUSE_LEFT)
+    {
+        if (ev.MOUSEPOS.y >= 500 && ev.MOUSEPOS.y <= 634 && ev.MOUSEPOS.x >= 810 && ev.MOUSEPOS.x <= 1100)
+            status = 1;
+        if (ev.MOUSEPOS.y >= 700 && ev.MOUSEPOS.y <= 834 && ev.MOUSEPOS.x >= 810 && ev.MOUSEPOS.x <= 1100)
+            wn.destroy();
+    }
 }
 
 void Game::loop(void)
@@ -55,33 +81,89 @@ void Game::loop(void)
         ev = wn.getEvent();
         if (ev.QUIT)
             wn.destroy();
-        handleObjects();
-        wn.clear();
-        draw();
-        wn.update();
+        if (status == 0)
+            handleMenu();
+        if (status == 1)
+            handleObjects();
+        if (status == 1)
+            handleEnd();
+        if (wn.isRunning())
+        {
+            wn.clear();
+            draw();
+            wn.update();
+        }
     }
     wn.destroy();
 }
 
+void Game::drawTimer(void)
+{
+    int min = timer / 60;
+    int sec = timer % 60;
+    std::string t = "";
+    t += std::to_string(min);
+    t += ":";
+    t += std::to_string(sec);
+    for (size_t i = 0; i < t.size(); i++) {
+        if (t[i] == ':')
+            wn.drawSprite(text, 36, grf::Vector(20+i*38, 20));
+        else
+            wn.drawSprite(text, 26 + t[i] - '0', grf::Vector(20+i*38, 20));
+    }
+}
+
+void Game::handleEnd(void)
+{
+    if (ev.MOUSE_LEFT)
+    {
+        if (ev.MOUSEPOS.y >= 700 && ev.MOUSEPOS.y <= 834 && ev.MOUSEPOS.x >= 810 && ev.MOUSEPOS.x <= 1100) {
+            status = 0;
+            homer = 1;
+            bart = 1;
+            lisa = 1;
+            maggie = 1;
+        }
+    }
+}
+
 void Game::draw(void)
 {
-    for (size_t i = 0; i < listObject.size(); i++)
-        listObject[i]->draw(wn, p->pos);
-    wn.drawSprite(Stree, 0, grf::Vector(1700, 20));
-    wn.drawSprite(Shomer, homer, grf::Vector(1700, 20));
-    wn.drawSprite(Smarge, 0, grf::Vector(1700, 20));
-    wn.drawSprite(Sbart, bart, grf::Vector(1700, 20));
-    wn.drawSprite(Slisa, lisa, grf::Vector(1700, 20));
-    wn.drawSprite(Smaggie, maggie, grf::Vector(1700, 20));
-    if (homer)
-        wn.drawSprite(charHomer, 0, grf::Vector(posHomer.x - p->pos.x + 920, posHomer.y - p->pos.y + 540));
-    if (bart)
-        wn.drawSprite(charBart, 0, grf::Vector(posBart.x - p->pos.x + 920, posBart.y - p->pos.y + 540));
-    if (lisa)
-        wn.drawSprite(charLisa, 0, grf::Vector(posLisa.x - p->pos.x + 920, posLisa.y - p->pos.y + 540));
-    if (maggie)
-        wn.drawSprite(charMaggie, 0, grf::Vector(posMaggie.x - p->pos.x + 920, posMaggie.y - p->pos.y + 540));
-    p->draw(wn);
+    if (status == 0)
+    {
+        wn.drawSprite(menu, 0, grf::Vector(0, 0));
+        wn.drawSprite(button, 0, grf::Vector(960, 500));
+        wn.drawSprite(button, 1, grf::Vector(960, 700));
+    }
+    if (status == 1)
+    {
+        int xx = p->pos.x;
+        int yy = p->pos.y;
+        wn.drawSprite(grass, 0, grf::Vector(-xx % 128, -yy % 128));
+        for (size_t i = 0; i < listObject.size(); i++)
+            listObject[i]->draw(wn, p->pos);
+        if (homer)
+            wn.drawSprite(charHomer, 0, grf::Vector(posHomer.x - p->pos.x + 920, posHomer.y - p->pos.y + 540));
+        if (bart)
+            wn.drawSprite(charBart, 0, grf::Vector(posBart.x - p->pos.x + 920, posBart.y - p->pos.y + 540));
+        if (lisa)
+            wn.drawSprite(charLisa, 0, grf::Vector(posLisa.x - p->pos.x + 920, posLisa.y - p->pos.y + 540));
+        if (maggie)
+            wn.drawSprite(charMaggie, 0, grf::Vector(posMaggie.x - p->pos.x + 920, posMaggie.y - p->pos.y + 540));
+        p->draw(wn);
+        wn.drawSprite(Stree, 0, grf::Vector(1700, 20));
+        wn.drawSprite(Shomer, homer, grf::Vector(1700, 20));
+        wn.drawSprite(Smarge, 0, grf::Vector(1700, 20));
+        wn.drawSprite(Sbart, bart, grf::Vector(1700, 20));
+        wn.drawSprite(Slisa, lisa, grf::Vector(1700, 20));
+        wn.drawSprite(Smaggie, maggie, grf::Vector(1700, 20));
+        drawTimer();
+    }
+    if (status == 2)
+    {
+        wn.drawSprite(end, 0, grf::Vector(0, 0));
+        wn.drawSprite(button, 2, grf::Vector(960, 700));
+    }
 }
 
 void Game::openMap(void)

@@ -66,6 +66,11 @@ grf::Event grf::Window::getEvent(void)
 
     if (_wn == nullptr)
         return ev;
+    sf::Vector2i v = sf::Mouse::getPosition();
+    ev.MOUSEPOS.x = v.x;
+    ev.MOUSEPOS.y = v.y;
+    if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+        ev.MOUSE_LEFT = true;
     while (_wn->pollEvent(event)) {
         if (event.type == event.Closed)
             ev.QUIT = true;

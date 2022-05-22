@@ -8,6 +8,7 @@
 #ifndef EVENT_HPP_
 #define EVENT_HPP_
 
+#include "Vector.hpp"
 
 namespace grf
 {
@@ -16,8 +17,12 @@ namespace grf
             Event();
             ~Event();
 
+            Vector MOUSEPOS;
+
             bool QUIT = false;
             
+            bool MOUSE_LEFT = false;
+
             bool KEY_DOWN = false;
             bool KEY_UP = false;
             bool KEY_LEFT = false;
