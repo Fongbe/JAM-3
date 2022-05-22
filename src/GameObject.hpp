@@ -15,7 +15,7 @@ class GameObject {
         GameObject(int id);
         ~GameObject();
 
-        void draw(grf::Window &window);
+        void draw(grf::Window &window, grf::Vector v);
         void destroy(std::vector<std::shared_ptr<GameObject>> &listObject);
 
         float imageIndex;

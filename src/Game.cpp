@@ -40,7 +40,7 @@ void Game::loop(void)
 void Game::draw(void)
 {
     for (size_t i = 0; i < listObject.size(); i++)
-        listObject[i]->draw(wn);
+        listObject[i]->draw(wn, p->pos);
     p->draw(wn);
 }
 

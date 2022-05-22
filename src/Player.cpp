@@ -19,13 +19,13 @@ Player::Player(grf::Vector v, int id) : GameObject(id)
     sprites.push_back(grf::SpriteSheet("SmargeRight", "sprites/margeRight.png", 5, 42, 70, 0, 0));
     sprites.push_back(grf::SpriteSheet("SmargeUp", "sprites/margeUp.png", 6, 20, 73, 0, 0));
     sprites.push_back(grf::SpriteSheet("SmargeDown", "sprites/margeDown.png", 7, 19, 71, 0, 0));
-    sprites[0].setOrigin(grf::Vector(8, 71));
+    sprites[0].setOrigin(grf::Vector(10, 71));
     sprites[1].setOrigin(grf::Vector(18, 65));
     sprites[2].setOrigin(grf::Vector(24, 65));
     sprites[3].setOrigin(grf::Vector(11, 68));
     sprites[4].setOrigin(grf::Vector(9, 66));
     sprite = sprites[0];
-    imageSpeed = 0.1;
+    imageSpeed = 0.2;
 }
 
 Player::~Player()
@@ -35,7 +35,7 @@ Player::~Player()
 void Player::draw(grf::Window &window)
 {
     if (sprite.getSize() != 0 && imageIndex < sprite.getSize())
-        window.drawSprite(sprite, imageIndex, grf::Vector(pos.x + 85, pos.y + 85));
+        window.drawSprite(sprite, imageIndex, grf::Vector(920, 540));
 }
 
 bool Player::collide(std::vector<std::string> map, int x, int y)
@@ -80,8 +80,8 @@ void Player::move(std::vector<std::string> map, grf::Event ev)
             }
         }
     }
-    pos.x += hspeed * 2;
-    pos.y += vspeed * 2;
+    pos.x += hspeed * 5;
+    pos.y += vspeed * 5;
     imageIndex += imageSpeed;
     if (imageIndex > sprite.getSize())
         imageIndex -= sprite.getSize();

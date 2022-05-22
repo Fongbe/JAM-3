@@ -19,10 +19,11 @@ GameObject::~GameObject()
 {
 }
 
-void GameObject::draw(grf::Window &window)
+void GameObject::draw(grf::Window &window, grf::Vector v)
 {
+
     if (sprite.getSize() != 0 && imageIndex < sprite.getSize())
-        window.drawSprite(sprite, imageIndex, pos);
+        window.drawSprite(sprite, imageIndex, grf::Vector(pos.x - v.x + 920 - 85, pos.y - v.y + 540 - 85));
 }
 
 void GameObject::destroy(std::vector<std::shared_ptr<GameObject>> &listObject)
