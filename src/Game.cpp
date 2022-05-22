@@ -9,9 +9,6 @@
 
 Game::Game()
 {
-    timer = 0;
-    tend = std::chrono::steady_clock::now() + std::chrono::seconds(1);
-    text = grf::SpriteSheet("", "sprites/font.png", 38, 38, 46, 0, 0);
     Stree = grf::SpriteSheet("stree", "sprites/tree.png", 1, 200, 200, 0, 0);
     Shomer = grf::SpriteSheet("stree", "sprites/treeHomer.png", 2, 200, 200, 0, 0);
     Smarge = grf::SpriteSheet("stree", "sprites/treeMarge.png", 1, 200, 200, 0, 0);
@@ -26,7 +23,6 @@ Game::Game()
     charBart.setOrigin(grf::Vector(12, 45));
     charLisa.setOrigin(grf::Vector(15, 40));
     charMaggie.setOrigin(grf::Vector(16, 30));
-    grass = grf::SpriteSheet("", "sprites/grass.png", 1, 2560, 1536, 0, 0);
     homer = 1;
     bart = 1;
     lisa = 1;
@@ -39,11 +35,6 @@ Game::~Game()
 
 void Game::handleObjects(void)
 {
-    if (std::chrono::steady_clock::now() >= tend)
-    {
-        timer += 1;
-        tend = std::chrono::steady_clock::now() + std::chrono::seconds(1);
-    }
     p->move(map, ev);
     if (p->pos.x == posHomer.x && p->pos.y == posHomer.y)
         homer = 0;
@@ -72,29 +63,16 @@ void Game::loop(void)
     wn.destroy();
 }
 
-void Game::drawTimer(void)
-{
-    int min = timer / 60;
-    int sec = timer % 60;
-    std::string t = "";
-    t += std::to_string(min);
-    t += ":";
-    t += std::to_string(sec);
-    for (size_t i = 0; i < t.size(); i++) {
-        if (t[i] == ':')
-            wn.drawSprite(text, 36, grf::Vector(20+i*38, 20));
-        else
-            wn.drawSprite(text, 26 + t[i] - '0', grf::Vector(20+i*38, 20));
-    }
-}
-
 void Game::draw(void)
 {
-    int xx = p->pos.x;
-    int yy = p->pos.y;
-    wn.drawSprite(grass, 0, grf::Vector(-xx % 128, -yy % 128));
     for (size_t i = 0; i < listObject.size(); i++)
         listObject[i]->draw(wn, p->pos);
+    wn.drawSprite(Stree, 0, grf::Vector(1700, 20));
+    wn.drawSprite(Shomer, homer, grf::Vector(1700, 20));
+    wn.drawSprite(Smarge, 0, grf::Vector(1700, 20));
+    wn.drawSprite(Sbart, bart, grf::Vector(1700, 20));
+    wn.drawSprite(Slisa, lisa, grf::Vector(1700, 20));
+    wn.drawSprite(Smaggie, maggie, grf::Vector(1700, 20));
     if (homer)
         wn.drawSprite(charHomer, 0, grf::Vector(posHomer.x - p->pos.x + 920, posHomer.y - p->pos.y + 540));
     if (bart)
@@ -104,13 +82,6 @@ void Game::draw(void)
     if (maggie)
         wn.drawSprite(charMaggie, 0, grf::Vector(posMaggie.x - p->pos.x + 920, posMaggie.y - p->pos.y + 540));
     p->draw(wn);
-    wn.drawSprite(Stree, 0, grf::Vector(1700, 20));
-    wn.drawSprite(Shomer, homer, grf::Vector(1700, 20));
-    wn.drawSprite(Smarge, 0, grf::Vector(1700, 20));
-    wn.drawSprite(Sbart, bart, grf::Vector(1700, 20));
-    wn.drawSprite(Slisa, lisa, grf::Vector(1700, 20));
-    wn.drawSprite(Smaggie, maggie, grf::Vector(1700, 20));
-    drawTimer();
 }
 
 void Game::openMap(void)

@@ -33,7 +33,7 @@ namespace grf
             void drawSpriteExt(Sprite sprite, Vector pos, int imageAngle, Vector scale);
             void drawSpriteExt(SpriteSheet spriteSheet, unsigned int imageIndex, Vector pos, float imageAngle, Vector scale);
 
-        //private:
+        private:
             sf::RenderWindow *_wn;
     };
 }
