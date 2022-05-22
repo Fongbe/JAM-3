@@ -64,11 +64,11 @@ void Player::move(std::vector<std::string> map, grf::Event ev)
         hspeed = 0;
         if (ev.KEY_Q)
             hspeed = -1;
-        if (ev.KEY_D)
+        else if (ev.KEY_D)
             hspeed = 1;
-        if (ev.KEY_Z)
+        else if (ev.KEY_Z)
             vspeed = -1;
-        if (ev.KEY_S)
+        else if (ev.KEY_S)
             vspeed = 1;
         if (vspeed != 0 || hspeed != 0)
         {
